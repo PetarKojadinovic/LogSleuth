@@ -1,0 +1,41 @@
+# Detection thresholds. Tune these instead of touching the code.
+
+ssh:
+  bruteforce:
+    max_attempts: 5          # >= N failed logins from one IP ...
+    window_seconds: 60       # ... inside a sliding window of T seconds
+  enumeration:
+    min_distinct_users: 5    # one IP trying >= N different usernames
+  success_after_failures:
+    min_failures: 5          # failures before a successful login ...
+    lookback_minutes: 60     # ... within this lookback
+  offhours:
+    hours: [0, 1, 2, 3, 4, 5]  # successful logins in these hours are flagged
+  anomaly:
+    bin: "1h"
+    zscore: 3.0
+    min_bins: 10
+
+web:
+  scanning:
+    max_errors: 15           # >= N 403/404 responses from one IP ...
+    window_seconds: 60       # ... inside a sliding window of T seconds
+    sensitive_paths:
+      - /.env
+      - /.git
+      - /phpmyadmin
+      - /wp-login.php
+      - /wp-admin
+      - /xmlrpc.php
+      - /admin
+      - /server-status
+      - /etc/passwd
+      - /cgi-bin
+  suspicious_ua:
+    tools: [sqlmap, nikto, hydra, nmap, masscan, dirbuster, gobuster, wfuzz]
+    bulk_tools: [curl, python-requests, wget]
+    bulk_min: 100            # curl & co. only flagged above this many requests
+  anomaly:
+    bin: "5min"
+    zscore: 3.0
+    min_bins: 10
